@@ -39,3 +39,15 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
     events    = ["s3:ObjectCreated:*"]
   }
 }
+
+resource "aws_s3_bucket_cors_configuration" "photos_upload_bucket_cors" {
+  bucket = aws_s3_bucket.photos_upload_bucket.id
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET", "PUT", "POST", "DELETE"]
+    allowed_origins = ["*"]
+    expose_headers  = ["ETag"]
+    max_age_seconds = 3000
+  }
+}

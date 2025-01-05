@@ -40,3 +40,27 @@ resource "aws_lambda_event_source_mapping" "sqs_event" {
   batch_size       = 10
   enabled          = true
 }
+
+resource "aws_iam_role_policy" "lambda_resize_s3_policy" {
+  name = "lambda_resize_s3_policy"
+  role = module.lambda_resize.iam_role_name
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          "${aws_s3_bucket.photos_upload_bucket.arn}",
+          "${aws_s3_bucket.photos_upload_bucket.arn}/*",
+          "${aws_s3_bucket.photos_store_bucket.arn}",
+          "${aws_s3_bucket.photos_store_bucket.arn}/*"
+        ]
+      }
+    ]
+  })
+}

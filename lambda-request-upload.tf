@@ -12,8 +12,8 @@ module "lambda_upload" {
   }
 }
 
-resource "aws_iam_role_policy" "lambda_s3_policy" {
-  name = "lambda_s3_policy"
+resource "aws_iam_role_policy" "lambda_request_s3_policy" {
+  name = "lambda_request_s3_policy"
   role = module.lambda_upload.iam_role_name
   policy = jsonencode({
     Version = "2012-10-17"
