@@ -12,3 +12,24 @@ module "lambda_upload" {
   }
 }
 
+resource "aws_iam_role_policy" "lambda_s3_policy" {
+  name = "lambda_s3_policy"
+  role = module.lambda_upload.iam_role_name
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          "${aws_s3_bucket.photos_upload_bucket.arn}",
+          "${aws_s3_bucket.photos_upload_bucket.arn}/*"
+        ]
+      }
+    ]
+  })
+}
