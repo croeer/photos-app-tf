@@ -8,8 +8,13 @@ variable "photos_store_bucket_name" {
   type        = string
 }
 
-variable "region" {
+variable "aws_region" {
   description = "AWS region"
   type        = string
   default     = "eu-central1"
+}
+
+variable "aws_account_id" {
+  description = "AWS account ID"
+  type        = string
 }
