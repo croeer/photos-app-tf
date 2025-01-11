@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "photo_table" {
-  name         = "photos_table"
+  name         = var.photos_table_name
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "PK"
   range_key    = "SK"

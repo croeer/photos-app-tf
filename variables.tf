@@ -18,3 +18,9 @@ variable "aws_account_id" {
   description = "AWS account ID"
   type        = string
 }
+
+variable "photos_table_name" {
+  description = "The name of the DynamoDB table with the photos."
+  type        = string
+  default     = "photos-table"
+}

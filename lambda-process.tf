@@ -1,3 +1,7 @@
+locals {
+  photos_table_name = aws_dynamodb_table.photo_table.name
+  sqs_queue_url     = aws_sqs_queue.queue.id
+}
 module "lambda_process" {
   source = "/Users/croeer/dev/aws-terraform/aws-lambda-tf"
 
@@ -5,9 +9,13 @@ module "lambda_process" {
   zipfile_name  = "/Users/croeer/dev/photos-app/lambda/process_photos.zip"
   handler_name  = "process_photos.lambda_handler"
   runtime       = "python3.12"
+  memory_size   = 1024
+  layers        = ["arn:aws:lambda:eu-central-1:770693421928:layer:Klayers-p312-Pillow:4"]
   environment_variables = {
     TZ                = "Europe/Berlin",
-    PHOTO_BUCKET_NAME = aws_s3_bucket.photos_store_bucket.bucket
+    PHOTO_BUCKET_NAME = aws_s3_bucket.photos_store_bucket.bucket,
+    PHOTO_TABLE_NAME  = local.photos_table_name
+    SQS_QUEUE_URL     = local.sqs_queue_url
   }
 }
 
@@ -77,7 +85,8 @@ resource "aws_iam_role_policy" "lambda_process_photos_dynamodb_policy" {
         Action = [
           "dynamodb:Scan",
           "dynamodb:Query",
-          "dynamodb:GetItem"
+          "dynamodb:GetItem",
+          "dynamodb:PutItem"
         ]
         Effect   = "Allow"
         Resource = "arn:aws:dynamodb:${var.aws_region}:${var.aws_account_id}:table/photos-table"
