@@ -51,3 +51,29 @@ resource "aws_s3_bucket_cors_configuration" "photos_upload_bucket_cors" {
     max_age_seconds = 3000
   }
 }
+
+
+resource "aws_s3_bucket_policy" "photos_store_bucket_cf_policy" {
+  bucket = aws_s3_bucket.photos_store_bucket.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Id      = "PolicyForCloudFrontPrivateContent-${aws_s3_bucket.photos_store_bucket.bucket}"
+    Statement = [
+      {
+        Sid    = "AllowCloudFrontServicePrincipal-${aws_s3_bucket.photos_store_bucket.bucket}"
+        Effect = "Allow"
+        Principal = {
+          Service = "cloudfront.amazonaws.com"
+        }
+        Action   = "s3:GetObject"
+        Resource = "${aws_s3_bucket.photos_store_bucket.arn}/*"
+        Condition = {
+          StringEquals = {
+            "AWS:SourceArn" = aws_cloudfront_distribution.cf_photos_store.arn
+          }
+        }
+      }
+    ]
+  })
+}
