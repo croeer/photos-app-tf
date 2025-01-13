@@ -10,6 +10,7 @@ module "lambda_list_photos" {
     PHOTO_TABLE_NAME             = local.photos_table_name,
     PHOTO_BUCKET_PUBLIC_READ_URL = "https://${aws_cloudfront_distribution.cf_photos_store.domain_name}{path}",
     PHOTOS_PER_BATCH             = 6
+    HOST                         = "${module.request-api.api_gw_invoke_url}"
   }
 }
 
