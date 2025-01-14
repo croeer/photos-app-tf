@@ -3,7 +3,7 @@ locals {
   sqs_queue_url     = aws_sqs_queue.queue.id
 }
 module "lambda_process" {
-  source = "/Users/croeer/dev/aws-terraform/aws-lambda-tf"
+  source = "git::https://github.com/croeer/aws-lambda-tf.git"
 
   function_name = "photos-process-lambda"
   zipfile_name  = "/Users/croeer/dev/photos-app/lambda/process_photos.zip"

@@ -1,5 +1,5 @@
 module "lambda_upload" {
-  source = "/Users/croeer/dev/aws-terraform/aws-lambda-tf"
+  source = "git::https://github.com/croeer/aws-lambda-tf.git"
 
   function_name = "photos-upload-lambda"
   zipfile_name  = "/Users/croeer/dev/photos-app/lambda/request_photo_upload.zip"

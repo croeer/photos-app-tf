@@ -1,5 +1,5 @@
 module "lambda_list_photos" {
-  source = "/Users/croeer/dev/aws-terraform/aws-lambda-tf"
+  source = "git::https://github.com/croeer/aws-lambda-tf.git"
 
   function_name = "photos-list-photos-lambda"
   zipfile_name  = "/Users/croeer/dev/photos-app/lambda/list_photos.zip"
