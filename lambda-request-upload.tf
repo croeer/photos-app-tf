@@ -7,7 +7,7 @@ module "lambda_upload" {
   runtime       = "python3.12"
   environment_variables = {
     TZ                     = "Europe/Berlin",
-    MAX_PHOTOS_PER_REQUEST = "10",
+    MAX_PHOTOS_PER_REQUEST = "15",
     UPLOAD_BUCKET_NAME     = aws_s3_bucket.photos_upload_bucket.bucket
   }
 }
