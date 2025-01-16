@@ -2,7 +2,7 @@ module "lambda_list_photos" {
   source = "git::https://github.com/croeer/aws-lambda-tf.git"
 
   function_name = "photos-list-photos-lambda"
-  zipfile_name  = "/Users/croeer/dev/photos-app/lambda/list_photos.zip"
+  zipfile_name  = "lambda-src/list_photos.zip"
   handler_name  = "list_photos.lambda_handler"
   runtime       = "python3.12"
   environment_variables = {

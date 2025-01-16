@@ -6,7 +6,7 @@ module "lambda_process" {
   source = "git::https://github.com/croeer/aws-lambda-tf.git"
 
   function_name = "photos-process-lambda"
-  zipfile_name  = "/Users/croeer/dev/photos-app/lambda/process_photos.zip"
+  zipfile_name  = "lambda-src/process_photos.zip"
   handler_name  = "process_photos.lambda_handler"
   runtime       = "python3.12"
   memory_size   = 1024

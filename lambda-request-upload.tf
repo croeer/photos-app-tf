@@ -2,7 +2,7 @@ module "lambda_upload" {
   source = "git::https://github.com/croeer/aws-lambda-tf.git"
 
   function_name = "photos-upload-lambda"
-  zipfile_name  = "/Users/croeer/dev/photos-app/lambda/request_photo_upload.zip"
+  zipfile_name  = "lambda-src/request_photo_upload.zip"
   handler_name  = "request_photo_upload.lambda_handler"
   runtime       = "python3.12"
   environment_variables = {
