@@ -1,8 +1,14 @@
+data "archive_file" "lambda_request_photo_upload_zip" {
+  type        = "zip"
+  output_path = "lambda-src/request_photo_upload.zip"
+  source_file = "lambda-src/request_photo_upload.py"
+}
+
 module "lambda_upload" {
   source = "git::https://github.com/croeer/aws-lambda-tf.git"
 
   function_name = "photos-upload-lambda"
-  zipfile_name  = "lambda-src/request_photo_upload.zip"
+  zipfile_name  = data.archive_file.lambda_request_photo_upload_zip.output_path
   handler_name  = "request_photo_upload.lambda_handler"
   runtime       = "python3.12"
   environment_variables = {

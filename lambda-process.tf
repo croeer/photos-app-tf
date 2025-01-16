@@ -2,11 +2,18 @@ locals {
   photos_table_name = aws_dynamodb_table.photo_table.name
   sqs_queue_url     = aws_sqs_queue.queue.id
 }
+
+data "archive_file" "lambda_process_photos_zip" {
+  type        = "zip"
+  output_path = "lambda-src/process_photos.zip"
+  source_file = "lambda-src/process_photos.py"
+}
+
 module "lambda_process" {
   source = "git::https://github.com/croeer/aws-lambda-tf.git"
 
   function_name = "photos-process-lambda"
-  zipfile_name  = "lambda-src/process_photos.zip"
+  zipfile_name  = data.archive_file.lambda_process_photos_zip.output_path
   handler_name  = "process_photos.lambda_handler"
   runtime       = "python3.12"
   memory_size   = 1024
