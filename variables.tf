@@ -47,3 +47,9 @@ variable "custom_domain_names" {
   type        = list(string)
   default     = []
 }
+
+variable "max_photos_per_request" {
+  description = "The maximum number of photos to upload in a single request."
+  type        = number
+  default     = 15
+}
