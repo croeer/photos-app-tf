@@ -17,6 +17,7 @@ module "lambda_process" {
   handler_name  = "process_photos.lambda_handler"
   runtime       = "python3.12"
   memory_size   = 1024
+  timeout       = 10
   layers        = ["arn:aws:lambda:eu-central-1:770693421928:layer:Klayers-p312-Pillow:4"]
   environment_variables = {
     TZ                = "Europe/Berlin",
