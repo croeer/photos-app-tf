@@ -14,7 +14,8 @@ module "lambda_bootstrap" {
   environment_variables = {
     TZ                     = "Europe/Berlin",
     MAX_PHOTOS_PER_REQUEST = var.max_photos_per_request,
-    HOST                   = "${module.request-api.api_gw_invoke_url}"
+    HOST                   = "${module.request-api.api_gw_invoke_url}",
+    CHALLENGEURL           = module.lambda_random_challenge.function_url
   }
 
   create_function_url = true
