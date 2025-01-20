@@ -1,6 +1,6 @@
 import boto3
 from botocore.exceptions import ClientError
-from PIL import Image
+from PIL import Image, ImageOps
 import io
 import os
 from datetime import datetime
@@ -46,6 +46,7 @@ def process_image(bucket_name, key):
 
     for size, key_name in [(400, thumbnail_key), (1080, web_key)]:
         resized_image = image.copy()
+        resized_image = ImageOps.exif_transpose(resized_image)
         resized_image.thumbnail((size, size))
         output = io.BytesIO()
         resized_image.save(output, format="WEBP")
