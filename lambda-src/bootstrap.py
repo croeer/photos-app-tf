@@ -17,6 +17,12 @@ def lambda_handler(event, context):
                     "challenge": {"href": f"{os.getenv('CHALLENGEURL')}"},
                 },
                 "maxPhotosPerRequest": int(os.getenv("MAX_PHOTOS_PER_REQUEST", 0)),
+                "enablePhotoChallenge": os.getenv(
+                    "ENABLE_PHOTO_CHALLENGE", "true"
+                ).lower()
+                == "true",
+                "enablePhotoUpload": os.getenv("ENABLE_PHOTO_UPLOAD", "true").lower()
+                == "true",
             },
             indent=2,
         ),

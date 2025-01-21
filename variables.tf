@@ -53,3 +53,15 @@ variable "max_photos_per_request" {
   type        = number
   default     = 15
 }
+
+variable "enable_photochallenge" {
+  description = "Enable the photo challenge feature."
+  type        = bool
+  default     = true
+}
+
+variable "enable_photoupload" {
+  description = "Enable the photo upload feature."
+  type        = bool
+  default     = true
+}
