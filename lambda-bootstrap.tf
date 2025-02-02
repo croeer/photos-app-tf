@@ -14,7 +14,7 @@ module "lambda_bootstrap" {
   environment_variables = {
     TZ                     = "Europe/Berlin",
     MAX_PHOTOS_PER_REQUEST = var.max_photos_per_request,
-    HOST                   = "${module.request-api.api_gw_invoke_url}",
+    HOST                   = aws_apigatewayv2_stage.default_stage.invoke_url,
     CHALLENGEURL           = module.lambda_random_challenge.function_url,
     ENABLE_PHOTO_CHALLENGE = var.enable_photochallenge,
     ENABLE_PHOTO_UPLOAD    = var.enable_photoupload

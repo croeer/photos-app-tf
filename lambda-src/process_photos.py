@@ -82,7 +82,7 @@ def save_metadata_to_dynamodb(name, keys):
             TableName=os.getenv("PHOTO_TABLE_NAME"),
             Item={
                 "PK": {"S": f"image#{name}"},
-                "SK": {"S": processed_at},
+                "SK": {"S": "METADATA"},
                 "GSI1PK": {"S": "list"},
                 "GSI1SK": {"S": processed_at},
                 "thumbnail": {
@@ -94,6 +94,7 @@ def save_metadata_to_dynamodb(name, keys):
                 "original": {
                     "S": f"s3://{os.getenv('PHOTO_BUCKET_NAME')}/{keys['original_key']}"
                 },
+                "likes": {"N": "0"},
             },
         )
     except ClientError as e:

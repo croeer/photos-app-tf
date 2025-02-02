@@ -25,6 +25,12 @@ variable "photos_table_name" {
   default     = "photos-table"
 }
 
+variable "photo_likes_table_name" {
+  description = "The name of the DynamoDB table with the photo likes."
+  type        = string
+  default     = "photo-likes-table"
+}
+
 variable "client_bucket_name" {
   description = "The name of the S3 bucket."
   type        = string
@@ -51,7 +57,7 @@ variable "custom_domain_names" {
 variable "max_photos_per_request" {
   description = "The maximum number of photos to upload in a single request."
   type        = number
-  default     = 15
+  default     = 50
 }
 
 variable "enable_photochallenge" {
@@ -65,3 +71,10 @@ variable "enable_photoupload" {
   type        = bool
   default     = true
 }
+
+variable "api_name" {
+  description = "The name of the API"
+  type        = string
+  default     = "photos-api"
+}
+

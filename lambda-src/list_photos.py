@@ -37,18 +37,18 @@ def lambda_handler(event, context):
         "_links": {
             "self": {
                 "href": (
-                    f"{os.environ['HOST']}/api/list?next={next_token}"
+                    f"{os.environ['HOST']}api/list?next={next_token}"
                     if next_token
-                    else f"{os.environ['HOST']}/api/list"
+                    else f"{os.environ['HOST']}api/list"
                 ),
             },
             **(
-                {"next": {"href": f"{os.environ['HOST']}/api/list?next={next_pointer}"}}
+                {"next": {"href": f"{os.environ['HOST']}api/list?next={next_pointer}"}}
                 if next_pointer
                 else {}
             ),
-            "request": {"href": f"{os.environ['HOST']}/api/request"},
-            "bootstrap": {"href": f"{os.environ['HOST']}/api"},
+            "request": {"href": f"{os.environ['HOST']}api/request"},
+            "bootstrap": {"href": f"{os.environ['HOST']}api"},
         },
         "photos": [
             {
@@ -56,6 +56,7 @@ def lambda_handler(event, context):
                 "thumbnail": to_public_read_url(record["thumbnail"]["S"]),
                 "web": to_public_read_url(record["web"]["S"]),
                 "original": to_public_read_url(record["original"]["S"]),
+                "likes": int(record.get("likes", {"N": "0"})["N"]),
             }
             for record in records
         ],
