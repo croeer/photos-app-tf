@@ -13,6 +13,7 @@ def lambda_handler(event, context):
                 "_links": {
                     "self": {"href": f"{os.getenv('HOST')}api"},
                     "list": {"href": f"{os.getenv('HOST')}api/list"},
+                    "likes": {"href": f"{os.getenv('HOST')}likes"},
                     "request": {"href": f"{os.getenv('HOST')}api/request"},
                     "challenge": {"href": f"{os.getenv('CHALLENGEURL')}"},
                 },

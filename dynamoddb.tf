@@ -31,3 +31,22 @@ resource "aws_dynamodb_table" "photo_table" {
     projection_type = "ALL"
   }
 }
+
+resource "aws_dynamodb_table" "photo_likes_table" {
+  name         = var.photo_likes_table_name
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "UserId"
+  range_key    = "ImageId"
+
+  attribute {
+    name = "UserId"
+    type = "S"
+  }
+
+  attribute {
+    name = "ImageId"
+    type = "S"
+  }
+
+}
+
