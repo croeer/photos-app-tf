@@ -5,7 +5,7 @@ data "archive_file" "lambda_request_photo_upload_zip" {
 }
 
 module "lambda_upload" {
-  source = "git::https://github.com/croeer/aws-lambda-tf.git"
+  source = "git::https://github.com/croeer/aws-lambda-tf.git?ref=v1.0.0"
 
   function_name = "photos-upload-lambda"
   zipfile_name  = data.archive_file.lambda_request_photo_upload_zip.output_path

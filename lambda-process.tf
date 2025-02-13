@@ -10,7 +10,7 @@ data "archive_file" "lambda_process_photos_zip" {
 }
 
 module "lambda_process" {
-  source = "git::https://github.com/croeer/aws-lambda-tf.git"
+  source = "git::https://github.com/croeer/aws-lambda-tf.git?ref=v1.0.0"
 
   function_name = "photos-process-lambda"
   zipfile_name  = data.archive_file.lambda_process_photos_zip.output_path
