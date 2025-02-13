@@ -1,18 +1,3 @@
-# module "request-api" {
-#   source = "/Users/croeer/dev/aws-terraform/aws-apigw-tf"
-
-#   api_name                    = "photos-api"
-#   get_integration_lambda_name = module.lambda_list_photos.lambda_function_name
-#   get_integration_lambda_arn  = module.lambda_list_photos.lambda_function_arn
-
-#   post_integration_lambda_name = module.lambda_upload.lambda_function_name
-#   post_integration_lambda_arn  = module.lambda_upload.lambda_function_arn
-
-#   like_integration_lambda_name = module.lambda_like_photos.lambda_function_name
-#   like_integration_lambda_arn  = module.lambda_like_photos.lambda_function_arn
-
-# }
-
 resource "aws_apigatewayv2_api" "http_api" {
   name          = var.api_name
   protocol_type = "HTTP"
@@ -43,17 +28,6 @@ resource "aws_apigatewayv2_integration" "like_integration" {
   integration_uri        = module.lambda_like_photos.lambda_function_arn
   payload_format_version = "2.0"
 }
-
-# resource "aws_apigatewayv2_authorizer" "jwt_authorizer" {
-#   api_id           = aws_apigatewayv2_api.http_api.id
-#   name             = "jwt-authorizer"
-#   authorizer_type  = "JWT"
-#   identity_sources = ["$request.header.Authorization"]
-#   jwt_configuration {
-#     issuer   = "https://idp.ku0.de/realms/plungestreak"
-#     audience = ["plungestreak"]
-#   }
-# }
 
 resource "aws_apigatewayv2_route" "default_get_route" {
   api_id    = aws_apigatewayv2_api.http_api.id

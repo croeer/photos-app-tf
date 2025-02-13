@@ -5,7 +5,7 @@ data "archive_file" "lambda_random_challenge_zip" {
 }
 
 module "lambda_random_challenge" {
-  source = "git::https://github.com/croeer/aws-lambda-tf.git"
+  source = "git::https://github.com/croeer/aws-lambda-tf.git?ref=v1.0.0"
 
   function_name = "photos-random-challenge-lambda"
   zipfile_name  = data.archive_file.lambda_random_challenge_zip.output_path

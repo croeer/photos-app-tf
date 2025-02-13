@@ -1,5 +1,5 @@
 module "client_homepage_spa" {
-  source = "git::https://github.com/croeer/aws-homepage-s3-cf-tf.git"
+  source = "git::https://github.com/croeer/aws-homepage-s3-cf-tf.git?ref=v1.0.0"
 
   bucket_name         = var.client_bucket_name
   custom_domain_names = var.custom_domain_names

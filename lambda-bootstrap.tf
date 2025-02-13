@@ -5,7 +5,7 @@ data "archive_file" "lambda_bootstrap_zip" {
 }
 
 module "lambda_bootstrap" {
-  source = "git::https://github.com/croeer/aws-lambda-tf.git"
+  source = "git::https://github.com/croeer/aws-lambda-tf.git?ref=v1.0.0"
 
   function_name = "bootstrap-lambda"
   zipfile_name  = data.archive_file.lambda_bootstrap_zip.output_path
