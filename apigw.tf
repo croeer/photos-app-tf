@@ -1,5 +1,14 @@
+module "api_gw_label" {
+  source     = "cloudposse/label/null"
+  version    = "0.25"
+  context    = module.this.context
+  name       = var.api_name
+  attributes = ["api"]
+}
+
+
 resource "aws_apigatewayv2_api" "http_api" {
-  name          = var.api_name
+  name          = module.api_gw_label.id
   protocol_type = "HTTP"
   cors_configuration {
     allow_origins = ["*"]

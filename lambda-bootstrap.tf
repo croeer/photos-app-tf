@@ -4,10 +4,19 @@ data "archive_file" "lambda_bootstrap_zip" {
   source_file = "lambda-src/bootstrap.py"
 }
 
-module "lambda_bootstrap" {
-  source = "git::https://github.com/croeer/aws-lambda-tf.git?ref=v1.0.0"
+module "lambda_bootstrap_label" {
+  source     = "cloudposse/label/null"
+  version    = "0.25"
+  context    = module.this.context
+  name       = "bootstrap"
+  attributes = ["lambda"]
+}
 
-  function_name = "bootstrap-lambda"
+module "lambda_bootstrap" {
+  source = "git::https://github.com/croeer/aws-lambda-tf.git?ref=v1.1.0"
+
+  function_name = module.lambda_bootstrap_label.id
+  tags          = module.lambda_bootstrap_label.tags
   zipfile_name  = data.archive_file.lambda_bootstrap_zip.output_path
   handler_name  = "bootstrap.lambda_handler"
   runtime       = "python3.12"

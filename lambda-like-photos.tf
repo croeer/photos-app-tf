@@ -8,17 +8,26 @@ data "archive_file" "lambda_like_photos_zip" {
   source_file = "lambda-src/like_photos.py"
 }
 
-module "lambda_like_photos" {
-  source = "git::https://github.com/croeer/aws-lambda-tf.git?ref=v1.0.0"
+module "lambda_like_label" {
+  source     = "cloudposse/label/null"
+  version    = "0.25"
+  context    = module.this.context
+  name       = "like"
+  attributes = ["lambda"]
+}
 
-  function_name = "photos-like-photos-lambda"
+module "lambda_like_photos" {
+  source = "git::https://github.com/croeer/aws-lambda-tf.git?ref=v1.1.0"
+
+  function_name = module.lambda_like_label.id
+  tags          = module.lambda_like_label.tags
   zipfile_name  = data.archive_file.lambda_like_photos_zip.output_path
   handler_name  = "like_photos.lambda_handler"
   runtime       = "python3.12"
   environment_variables = {
     TZ                     = "Europe/Berlin",
-    PHOTO_LIKES_TABLE_NAME = local.photos_likes_table_name,
-    PHOTO_TABLE_NAME       = local.photos_table_name,
+    PHOTO_LIKES_TABLE_NAME = module.dynamodb_likes_label.id,
+    PHOTO_TABLE_NAME       = module.dynamodb_photos_label.id,
   }
 }
 
@@ -40,8 +49,8 @@ resource "aws_iam_role_policy" "lambda_like_photos_dynamodb_policy" {
         ]
         Effect = "Allow"
         Resource = [
-          "arn:aws:dynamodb:${var.aws_region}:${var.aws_account_id}:table/${var.photos_table_name}",
-          "arn:aws:dynamodb:${var.aws_region}:${var.aws_account_id}:table/${var.photo_likes_table_name}"
+          "arn:aws:dynamodb:${var.aws_region}:${var.aws_account_id}:table/${module.dynamodb_photos_label.id}",
+          "arn:aws:dynamodb:${var.aws_region}:${var.aws_account_id}:table/${module.dynamodb_likes_label.id}"
         ]
       }
     ]

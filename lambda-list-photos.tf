@@ -4,16 +4,25 @@ data "archive_file" "lambda_list_photos_zip" {
   source_file = "lambda-src/list_photos.py"
 }
 
-module "lambda_list_photos" {
-  source = "git::https://github.com/croeer/aws-lambda-tf.git?ref=v1.0.0"
+module "lambda_list_label" {
+  source     = "cloudposse/label/null"
+  version    = "0.25"
+  context    = module.this.context
+  name       = "list"
+  attributes = ["lambda"]
+}
 
-  function_name = "photos-list-photos-lambda"
+module "lambda_list_photos" {
+  source = "git::https://github.com/croeer/aws-lambda-tf.git?ref=v1.1.0"
+
+  function_name = module.lambda_list_label.id
+  tags          = module.lambda_list_label.tags
   zipfile_name  = data.archive_file.lambda_list_photos_zip.output_path
   handler_name  = "list_photos.lambda_handler"
   runtime       = "python3.12"
   environment_variables = {
     TZ                           = "Europe/Berlin",
-    PHOTO_TABLE_NAME             = local.photos_table_name,
+    PHOTO_TABLE_NAME             = module.dynamodb_photos_label.id,
     PHOTO_BUCKET_PUBLIC_READ_URL = "https://${aws_cloudfront_distribution.cf_photos_store.domain_name}{path}",
     PHOTOS_PER_BATCH             = 6
     HOST                         = aws_apigatewayv2_stage.default_stage.invoke_url
@@ -55,7 +64,7 @@ resource "aws_iam_role_policy" "lambda_list_photos_dynamodb_policy" {
           "dynamodb:GetItem"
         ]
         Effect   = "Allow"
-        Resource = "arn:aws:dynamodb:${var.aws_region}:${var.aws_account_id}:table/${var.photos_table_name}/*"
+        Resource = "arn:aws:dynamodb:${var.aws_region}:${var.aws_account_id}:table/${module.dynamodb_photos_label.id}/*"
       }
     ]
   })

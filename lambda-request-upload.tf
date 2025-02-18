@@ -4,10 +4,19 @@ data "archive_file" "lambda_request_photo_upload_zip" {
   source_file = "lambda-src/request_photo_upload.py"
 }
 
-module "lambda_upload" {
-  source = "git::https://github.com/croeer/aws-lambda-tf.git?ref=v1.0.0"
+module "lambda_upload_label" {
+  source     = "cloudposse/label/null"
+  version    = "0.25"
+  context    = module.this.context
+  name       = "upload"
+  attributes = ["lambda"]
+}
 
-  function_name = "photos-upload-lambda"
+module "lambda_upload" {
+  source = "git::https://github.com/croeer/aws-lambda-tf.git?ref=v1.1.0"
+
+  function_name = module.lambda_upload_label.id
+  tags          = module.lambda_upload_label.tags
   zipfile_name  = data.archive_file.lambda_request_photo_upload_zip.output_path
   handler_name  = "request_photo_upload.lambda_handler"
   runtime       = "python3.12"

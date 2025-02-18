@@ -9,10 +9,19 @@ data "archive_file" "lambda_process_photos_zip" {
   source_file = "lambda-src/process_photos.py"
 }
 
-module "lambda_process" {
-  source = "git::https://github.com/croeer/aws-lambda-tf.git?ref=v1.0.0"
+module "lambda_process_label" {
+  source     = "cloudposse/label/null"
+  version    = "0.25"
+  context    = module.this.context
+  name       = "process"
+  attributes = ["lambda"]
+}
 
-  function_name = "photos-process-lambda"
+module "lambda_process" {
+  source = "git::https://github.com/croeer/aws-lambda-tf.git?ref=v1.1.0"
+
+  function_name = module.lambda_process_label.id
+  tags          = module.lambda_process_label.tags
   zipfile_name  = data.archive_file.lambda_process_photos_zip.output_path
   handler_name  = "process_photos.lambda_handler"
   runtime       = "python3.12"
@@ -97,7 +106,7 @@ resource "aws_iam_role_policy" "lambda_process_photos_dynamodb_policy" {
           "dynamodb:PutItem"
         ]
         Effect   = "Allow"
-        Resource = "arn:aws:dynamodb:${var.aws_region}:${var.aws_account_id}:table/photos-table"
+        Resource = "arn:aws:dynamodb:${var.aws_region}:${var.aws_account_id}:table/${module.dynamodb_photos_label.id}"
       }
     ]
   })

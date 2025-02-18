@@ -69,6 +69,6 @@ variable "enable_photoupload" {
 variable "api_name" {
   description = "The name of the API"
   type        = string
-  default     = "photos-api"
+  default     = "photos"
 }
 

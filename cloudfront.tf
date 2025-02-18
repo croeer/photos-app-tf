@@ -2,9 +2,18 @@ locals {
   s3_origin_id = "${var.photos_store_bucket_name}-origin"
 }
 
+module "cloudfront_label" {
+  source     = "cloudposse/label/null"
+  version    = "0.25"
+  context    = module.this.context
+  name       = var.photos_store_bucket_name
+  attributes = ["oac", "cf"]
+}
+
+
 resource "aws_cloudfront_origin_access_control" "default" {
   description                       = "Restrict access to S3 bucket ${var.photos_store_bucket_name}"
-  name                              = "oac_${var.photos_store_bucket_name}"
+  name                              = module.cloudfront_label.id
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"

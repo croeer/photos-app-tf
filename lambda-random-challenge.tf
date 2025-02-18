@@ -4,10 +4,19 @@ data "archive_file" "lambda_random_challenge_zip" {
   source_file = "lambda-src/random_challenge.py"
 }
 
-module "lambda_random_challenge" {
-  source = "git::https://github.com/croeer/aws-lambda-tf.git?ref=v1.0.0"
+module "lambda_randomchallenge_label" {
+  source     = "cloudposse/label/null"
+  version    = "0.25"
+  context    = module.this.context
+  name       = "randomchallenge"
+  attributes = ["lambda"]
+}
 
-  function_name = "photos-random-challenge-lambda"
+module "lambda_random_challenge" {
+  source = "git::https://github.com/croeer/aws-lambda-tf.git?ref=v1.1.0"
+
+  function_name = module.lambda_randomchallenge_label.id
+  tags          = module.lambda_randomchallenge_label.tags
   zipfile_name  = data.archive_file.lambda_random_challenge_zip.output_path
   handler_name  = "random_challenge.lambda_handler"
   runtime       = "python3.12"

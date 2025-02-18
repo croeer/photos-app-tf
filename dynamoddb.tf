@@ -1,5 +1,12 @@
+module "dynamodb_photos_label" {
+  source  = "cloudposse/label/null"
+  version = "0.25"
+  context = module.this.context
+  name    = var.photos_table_name
+}
+
 resource "aws_dynamodb_table" "photo_table" {
-  name         = var.photos_table_name
+  name         = module.dynamodb_photos_label.id
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "PK"
   range_key    = "SK"
@@ -32,8 +39,15 @@ resource "aws_dynamodb_table" "photo_table" {
   }
 }
 
+module "dynamodb_likes_label" {
+  source  = "cloudposse/label/null"
+  version = "0.25"
+  context = module.this.context
+  name    = var.photo_likes_table_name
+}
+
 resource "aws_dynamodb_table" "photo_likes_table" {
-  name         = var.photo_likes_table_name
+  name         = module.dynamodb_likes_label.id
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "UserId"
   range_key    = "ImageId"
