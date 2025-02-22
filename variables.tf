@@ -72,3 +72,12 @@ variable "api_name" {
   default     = "photos"
 }
 
+variable "idp_config" {
+  description = "The configuration for the identity provider."
+  type = object({
+    realm     = string
+    idp_url   = string
+    client_id = string
+  })
+  default = null
+}

@@ -6,6 +6,17 @@ module "api_gw_label" {
   attributes = ["api"]
 }
 
+resource "aws_apigatewayv2_authorizer" "jwt_authorizer" {
+  count            = var.idp_config != null ? 1 : 0
+  api_id           = aws_apigatewayv2_api.http_api.id
+  name             = "jwt-authorizer"
+  authorizer_type  = "JWT"
+  identity_sources = ["$request.header.Authorization"]
+  jwt_configuration {
+    issuer   = "${var.idp_config.idp_url}/realms/${var.idp_config.realm}"
+    audience = [var.idp_config.client_id]
+  }
+}
 
 resource "aws_apigatewayv2_api" "http_api" {
   name          = module.api_gw_label.id
@@ -39,36 +50,36 @@ resource "aws_apigatewayv2_integration" "like_integration" {
 }
 
 resource "aws_apigatewayv2_route" "default_get_route" {
-  api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "GET /{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.get_lambda_integration.id}"
-  # authorization_type = "JWT"
-  # authorizer_id = aws_apigatewayv2_authorizer.jwt_authorizer.id
+  api_id             = aws_apigatewayv2_api.http_api.id
+  route_key          = "GET /{proxy+}"
+  target             = "integrations/${aws_apigatewayv2_integration.get_lambda_integration.id}"
+  authorization_type = var.idp_config != null ? "JWT" : "NONE"
+  authorizer_id      = var.idp_config != null ? aws_apigatewayv2_authorizer.jwt_authorizer[0].id : null
 }
 
 resource "aws_apigatewayv2_route" "like_get_route" {
-  api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "GET /likes/{userId}"
-  target    = "integrations/${aws_apigatewayv2_integration.like_integration.id}"
-  # authorization_type = "JWT" 
-  # authorizer_id = aws_apigatewayv2_authorizer.jwt_authorizer.id
+  api_id             = aws_apigatewayv2_api.http_api.id
+  route_key          = "GET /likes/{userId}"
+  target             = "integrations/${aws_apigatewayv2_integration.like_integration.id}"
+  authorization_type = var.idp_config != null ? "JWT" : "NONE"
+  authorizer_id      = var.idp_config != null ? aws_apigatewayv2_authorizer.jwt_authorizer[0].id : null
 }
 
 resource "aws_apigatewayv2_route" "like_post_route" {
-  api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "POST /likes/{userId}/{imageId}"
-  target    = "integrations/${aws_apigatewayv2_integration.like_integration.id}"
-  # authorization_type = "JWT"
-  # authorizer_id = aws_apigatewayv2_authorizer.jwt_authorizer.id
+  api_id             = aws_apigatewayv2_api.http_api.id
+  route_key          = "POST /likes/{userId}/{imageId}"
+  target             = "integrations/${aws_apigatewayv2_integration.like_integration.id}"
+  authorization_type = var.idp_config != null ? "JWT" : "NONE"
+  authorizer_id      = var.idp_config != null ? aws_apigatewayv2_authorizer.jwt_authorizer[0].id : null
 }
 
 
 resource "aws_apigatewayv2_route" "default_post_route" {
-  api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "POST /{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.post_lambda_integration.id}"
-  # authorization_type = "JWT"
-  # authorizer_id = aws_apigatewayv2_authorizer.jwt_authorizer.id
+  api_id             = aws_apigatewayv2_api.http_api.id
+  route_key          = "POST /{proxy+}"
+  target             = "integrations/${aws_apigatewayv2_integration.post_lambda_integration.id}"
+  authorization_type = var.idp_config != null ? "JWT" : "NONE"
+  authorizer_id      = var.idp_config != null ? aws_apigatewayv2_authorizer.jwt_authorizer[0].id : null
 }
 
 resource "aws_apigatewayv2_stage" "default_stage" {
