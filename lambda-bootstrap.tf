@@ -8,7 +8,7 @@ module "lambda_bootstrap_label" {
   source     = "cloudposse/label/null"
   version    = "0.25"
   context    = module.this.context
-  name       = "bootstrap"
+  name       = "${var.app_name}-bootstrap"
   attributes = ["lambda"]
 }
 

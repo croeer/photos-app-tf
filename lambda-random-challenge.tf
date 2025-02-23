@@ -8,7 +8,7 @@ module "lambda_randomchallenge_label" {
   source     = "cloudposse/label/null"
   version    = "0.25"
   context    = module.this.context
-  name       = "randomchallenge"
+  name       = "${var.app_name}-randomchallenge"
   attributes = ["lambda"]
 }
 

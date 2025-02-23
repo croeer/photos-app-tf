@@ -13,7 +13,7 @@ module "lambda_process_label" {
   source     = "cloudposse/label/null"
   version    = "0.25"
   context    = module.this.context
-  name       = "process"
+  name       = "${var.app_name}-process"
   attributes = ["lambda"]
 }
 

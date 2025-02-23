@@ -2,7 +2,7 @@ module "api_gw_label" {
   source     = "cloudposse/label/null"
   version    = "0.25"
   context    = module.this.context
-  name       = var.api_name
+  name       = var.app_name
   attributes = ["api"]
 }
 
@@ -93,7 +93,7 @@ output "api_url" {
 }
 
 resource "aws_lambda_permission" "get_lambda_permission" {
-  statement_id  = "Allow${var.api_name}ApiGateway-${module.lambda_list_photos.lambda_function_name}"
+  statement_id  = "Allow${var.app_name}ApiGateway-${module.lambda_list_photos.lambda_function_name}"
   action        = "lambda:InvokeFunction"
   function_name = module.lambda_list_photos.lambda_function_name
   principal     = "apigateway.amazonaws.com"
@@ -104,7 +104,7 @@ resource "aws_lambda_permission" "get_lambda_permission" {
 }
 
 resource "aws_lambda_permission" "post_lambda_permission" {
-  statement_id  = "Allow${var.api_name}ApiGateway-${module.lambda_upload.lambda_function_name}"
+  statement_id  = "Allow${var.app_name}ApiGateway-${module.lambda_upload.lambda_function_name}"
   action        = "lambda:InvokeFunction"
   function_name = module.lambda_upload.lambda_function_name
   principal     = "apigateway.amazonaws.com"
@@ -115,7 +115,7 @@ resource "aws_lambda_permission" "post_lambda_permission" {
 }
 
 resource "aws_lambda_permission" "like_lambda_permission" {
-  statement_id  = "Allow${var.api_name}ApiGateway-${module.lambda_like_photos.lambda_function_name}"
+  statement_id  = "Allow${var.app_name}ApiGateway-${module.lambda_like_photos.lambda_function_name}"
   action        = "lambda:InvokeFunction"
   function_name = module.lambda_like_photos.lambda_function_name
   principal     = "apigateway.amazonaws.com"

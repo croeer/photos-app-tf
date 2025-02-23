@@ -1,11 +1,7 @@
-variable "photos_upload_bucket_name" {
-  description = "The name of the S3 bucket with the uploaded photos."
+variable "app_name" {
+  description = "The name of the application."
   type        = string
-}
-
-variable "photos_store_bucket_name" {
-  description = "The name of the S3 bucket with the resized photos."
-  type        = string
+  default     = "photosapp"
 }
 
 variable "aws_region" {
@@ -29,11 +25,6 @@ variable "photo_likes_table_name" {
   description = "The name of the DynamoDB table with the photo likes."
   type        = string
   default     = "photo-likes-table"
-}
-
-variable "client_bucket_name" {
-  description = "The name of the S3 bucket."
-  type        = string
 }
 
 variable "acm_certificate_arn" {
@@ -64,12 +55,6 @@ variable "enable_photoupload" {
   description = "Enable the photo upload feature."
   type        = bool
   default     = true
-}
-
-variable "api_name" {
-  description = "The name of the API"
-  type        = string
-  default     = "photos"
 }
 
 variable "idp_config" {

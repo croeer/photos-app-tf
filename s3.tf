@@ -1,9 +1,26 @@
+
+module "photos_upload_bucketlabel" {
+  source     = "cloudposse/label/null"
+  version    = "0.25"
+  context    = module.this.context
+  name       = "${var.app_name}-upload"
+  attributes = ["s3", var.aws_account_id]
+}
+
 resource "aws_s3_bucket" "photos_upload_bucket" {
-  bucket = var.photos_upload_bucket_name
+  bucket = module.photos_upload_bucketlabel.id
+}
+
+module "photos_store_bucketlabel" {
+  source     = "cloudposse/label/null"
+  version    = "0.25"
+  context    = module.this.context
+  name       = "${var.app_name}-store"
+  attributes = ["s3", var.aws_account_id]
 }
 
 resource "aws_s3_bucket" "photos_store_bucket" {
-  bucket = var.photos_store_bucket_name
+  bucket = module.photos_store_bucketlabel.id
 }
 
 data "aws_iam_policy_document" "queue" {

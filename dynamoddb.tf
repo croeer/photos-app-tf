@@ -2,7 +2,7 @@ module "dynamodb_photos_label" {
   source  = "cloudposse/label/null"
   version = "0.25"
   context = module.this.context
-  name    = var.photos_table_name
+  name    = "${var.app_name}-photos"
 }
 
 resource "aws_dynamodb_table" "photo_table" {
@@ -43,7 +43,7 @@ module "dynamodb_likes_label" {
   source  = "cloudposse/label/null"
   version = "0.25"
   context = module.this.context
-  name    = var.photo_likes_table_name
+  name    = "${var.app_name}-likes"
 }
 
 resource "aws_dynamodb_table" "photo_likes_table" {

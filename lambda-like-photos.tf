@@ -12,7 +12,7 @@ module "lambda_like_label" {
   source     = "cloudposse/label/null"
   version    = "0.25"
   context    = module.this.context
-  name       = "like"
+  name       = "${var.app_name}-like"
   attributes = ["lambda"]
 }
 

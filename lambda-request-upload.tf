@@ -8,7 +8,7 @@ module "lambda_upload_label" {
   source     = "cloudposse/label/null"
   version    = "0.25"
   context    = module.this.context
-  name       = "upload"
+  name       = "${var.app_name}-upload"
   attributes = ["lambda"]
 }
 
