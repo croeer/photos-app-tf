@@ -11,3 +11,8 @@ output "api_gw_invoke_url" {
   description = "The invoke URL of the API Gateway"
   value       = aws_apigatewayv2_stage.default_stage.invoke_url
 }
+
+output "s3_bucket_name" {
+  description = "The name of the client S3 bucket"
+  value       = module.client_bucketlabel.id
+}

@@ -1,4 +1,3 @@
-
 module "photos_upload_bucketlabel" {
   source     = "cloudposse/label/null"
   version    = "0.25"
@@ -33,7 +32,7 @@ data "aws_iam_policy_document" "queue" {
     }
 
     actions   = ["sqs:SendMessage"]
-    resources = ["arn:aws:sqs:*:*:photos-app-s3-sqs"]
+    resources = [aws_sqs_queue.queue.arn]
 
     condition {
       test     = "ArnEquals"
@@ -43,13 +42,29 @@ data "aws_iam_policy_document" "queue" {
   }
 }
 
+module "photos_sqs_label" {
+  source     = "cloudposse/label/null"
+  version    = "0.25"
+  context    = module.this.context
+  name       = var.app_name
+  attributes = ["sqs"]
+}
+
+
 resource "aws_sqs_queue" "queue" {
-  name   = "photos-app-s3-sqs"
-  policy = data.aws_iam_policy_document.queue.json
+  name = module.photos_sqs_label.id
+}
+
+# Attach the policy to the SQS queue
+resource "aws_sqs_queue_policy" "queue_policy" {
+  queue_url = aws_sqs_queue.queue.id
+  policy    = data.aws_iam_policy_document.queue.json
 }
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
   bucket = aws_s3_bucket.photos_upload_bucket.id
+
+  depends_on = [aws_sqs_queue.queue, aws_sqs_queue_policy.queue_policy, aws_s3_bucket.photos_upload_bucket] // Add this line
 
   queue {
     queue_arn = aws_sqs_queue.queue.arn

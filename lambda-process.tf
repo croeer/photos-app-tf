@@ -36,8 +36,15 @@ module "lambda_process" {
   }
 }
 
+module "lambda_sqspolicy_label" {
+  source  = "cloudposse/label/null"
+  version = "0.25"
+  context = module.this.context
+  name    = "${var.app_name}-sqs-policy"
+}
+
 resource "aws_iam_policy" "lambda_sqs_policy" {
-  name = "lambda_sqs_policy"
+  name = module.lambda_sqspolicy_label.id
 
   policy = jsonencode({
     Version = "2012-10-17"
