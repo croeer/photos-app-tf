@@ -65,6 +65,12 @@ def process_image(bucket_name, key):
     except ClientError as e:
         raise RuntimeError(f"Error uploading to S3: {e}")
 
+    # Delete the original image from S3
+    try:
+        s3.delete_object(Bucket=bucket_name, Key=key)
+    except ClientError as e:
+        raise RuntimeError(f"Error deleting original image from S3: {e}")
+
     return {
         "thumbnail_key": thumbnail_key,
         "web_key": web_key,

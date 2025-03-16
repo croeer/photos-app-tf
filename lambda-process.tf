@@ -85,15 +85,26 @@ resource "aws_iam_role_policy" "lambda_process_s3_policy" {
         Action = [
           "s3:PutObject",
           "s3:GetObject",
-          "s3:ListBucket"
+          "s3:ListBucket",
+          "s3:DeleteObject"
         ]
         Resource = [
           "${aws_s3_bucket.photos_upload_bucket.arn}",
           "${aws_s3_bucket.photos_upload_bucket.arn}/*",
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
           "${aws_s3_bucket.photos_store_bucket.arn}",
           "${aws_s3_bucket.photos_store_bucket.arn}/*"
         ]
-      }
+      },
     ]
   })
 }

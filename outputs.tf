@@ -16,3 +16,8 @@ output "s3_bucket_name" {
   description = "The name of the client S3 bucket"
   value       = module.client_bucketlabel.id
 }
+
+output "client_domain_name" {
+  description = "The domain name of the client"
+  value       = module.client_homepage_spa.cloudfront_distribution.domain_name
+}
