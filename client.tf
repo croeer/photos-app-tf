@@ -8,7 +8,7 @@ module "client_bucketlabel" {
 }
 
 module "client_homepage_spa" {
-  source = "git::https://github.com/croeer/aws-homepage-s3-cf-tf.git?ref=v1.0.0"
+  source = "git::https://github.com/croeer/aws-homepage-s3-cf-tf.git?ref=v1.0.1"
 
   bucket_name         = module.client_bucketlabel.id
   custom_domain_names = var.custom_domain_names

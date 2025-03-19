@@ -7,7 +7,8 @@ module "photos_upload_bucketlabel" {
 }
 
 resource "aws_s3_bucket" "photos_upload_bucket" {
-  bucket = module.photos_upload_bucketlabel.id
+  bucket        = module.photos_upload_bucketlabel.id
+  force_destroy = true
 }
 
 module "photos_store_bucketlabel" {
@@ -19,7 +20,8 @@ module "photos_store_bucketlabel" {
 }
 
 resource "aws_s3_bucket" "photos_store_bucket" {
-  bucket = module.photos_store_bucketlabel.id
+  bucket        = module.photos_store_bucketlabel.id
+  force_destroy = true
 }
 
 data "aws_iam_policy_document" "queue" {
