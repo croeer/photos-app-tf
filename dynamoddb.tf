@@ -47,6 +47,7 @@ module "dynamodb_likes_label" {
 }
 
 resource "aws_dynamodb_table" "photo_likes_table" {
+  count        = var.enable_likes ? 1 : 0
   name         = module.dynamodb_likes_label.id
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "UserId"
@@ -61,6 +62,5 @@ resource "aws_dynamodb_table" "photo_likes_table" {
     name = "ImageId"
     type = "S"
   }
-
 }
 

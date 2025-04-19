@@ -66,3 +66,9 @@ variable "idp_config" {
   })
   default = null
 }
+
+variable "enable_likes" {
+  description = "Enable the image like feature"
+  type        = bool
+  default     = true
+}

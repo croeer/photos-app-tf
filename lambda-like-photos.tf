@@ -1,7 +1,3 @@
-locals {
-  photos_likes_table_name = aws_dynamodb_table.photo_likes_table.name
-}
-
 data "archive_file" "lambda_like_photos_zip" {
   type        = "zip"
   output_path = "lambda-src/like_photos.zip"
@@ -17,6 +13,7 @@ module "lambda_like_label" {
 }
 
 module "lambda_like_photos" {
+  count  = var.enable_likes ? 1 : 0
   source = "git::https://github.com/croeer/aws-lambda-tf.git?ref=v1.1.0"
 
   function_name = module.lambda_like_label.id
@@ -31,10 +28,10 @@ module "lambda_like_photos" {
   }
 }
 
-
 resource "aws_iam_role_policy" "lambda_like_photos_dynamodb_policy" {
-  name = "lambda_like_photos_policy"
-  role = module.lambda_like_photos.iam_role_name
+  count = var.enable_likes ? 1 : 0
+  name  = "lambda_like_photos_policy"
+  role  = module.lambda_like_photos[0].iam_role_name
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [

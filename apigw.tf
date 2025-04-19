@@ -43,9 +43,10 @@ resource "aws_apigatewayv2_integration" "post_lambda_integration" {
 }
 
 resource "aws_apigatewayv2_integration" "like_integration" {
+  count                  = var.enable_likes ? 1 : 0
   api_id                 = aws_apigatewayv2_api.http_api.id
   integration_type       = "AWS_PROXY"
-  integration_uri        = module.lambda_like_photos.lambda_function_arn
+  integration_uri        = module.lambda_like_photos[0].lambda_function_arn
   payload_format_version = "2.0"
 }
 
@@ -58,17 +59,17 @@ resource "aws_apigatewayv2_route" "default_get_route" {
 }
 
 resource "aws_apigatewayv2_route" "like_get_route" {
-  count     = var.idp_config != null ? 0 : 1
+  count     = var.enable_likes && var.idp_config == null ? 1 : 0
   api_id    = aws_apigatewayv2_api.http_api.id
   route_key = "GET /likes/{userId}"
-  target    = "integrations/${aws_apigatewayv2_integration.like_integration.id}"
+  target    = "integrations/${aws_apigatewayv2_integration.like_integration[0].id}"
 }
 
 resource "aws_apigatewayv2_route" "like_post_route" {
-  count     = var.idp_config != null ? 0 : 1
+  count     = var.enable_likes && var.idp_config == null ? 1 : 0
   api_id    = aws_apigatewayv2_api.http_api.id
   route_key = "POST /likes/{userId}/{imageId}"
-  target    = "integrations/${aws_apigatewayv2_integration.like_integration.id}"
+  target    = "integrations/${aws_apigatewayv2_integration.like_integration[0].id}"
 }
 
 resource "aws_apigatewayv2_route" "default_post_route" {
@@ -89,19 +90,19 @@ resource "aws_apigatewayv2_route" "default_get_route_auth" {
 }
 
 resource "aws_apigatewayv2_route" "like_get_route_auth" {
-  count              = var.idp_config != null ? 1 : 0
+  count              = var.enable_likes && var.idp_config != null ? 1 : 0
   api_id             = aws_apigatewayv2_api.http_api.id
   route_key          = "GET /likes/{userId}"
-  target             = "integrations/${aws_apigatewayv2_integration.like_integration.id}"
+  target             = "integrations/${aws_apigatewayv2_integration.like_integration[0].id}"
   authorization_type = "JWT"
   authorizer_id      = aws_apigatewayv2_authorizer.jwt_authorizer[0].id
 }
 
 resource "aws_apigatewayv2_route" "like_post_route_auth" {
-  count              = var.idp_config != null ? 1 : 0
+  count              = var.enable_likes && var.idp_config != null ? 1 : 0
   api_id             = aws_apigatewayv2_api.http_api.id
   route_key          = "POST /likes/{userId}/{imageId}"
-  target             = "integrations/${aws_apigatewayv2_integration.like_integration.id}"
+  target             = "integrations/${aws_apigatewayv2_integration.like_integration[0].id}"
   authorization_type = "JWT"
   authorizer_id      = aws_apigatewayv2_authorizer.jwt_authorizer[0].id
 }
@@ -148,12 +149,11 @@ resource "aws_lambda_permission" "post_lambda_permission" {
 }
 
 resource "aws_lambda_permission" "like_lambda_permission" {
-  statement_id  = "Allow${var.app_name}ApiGateway-${module.lambda_like_photos.lambda_function_name}"
+  count         = var.enable_likes ? 1 : 0
+  statement_id  = "Allow${var.app_name}ApiGateway-${module.lambda_like_photos[0].lambda_function_name}"
   action        = "lambda:InvokeFunction"
-  function_name = module.lambda_like_photos.lambda_function_name
+  function_name = module.lambda_like_photos[0].lambda_function_name
   principal     = "apigateway.amazonaws.com"
 
-  # The /* part allows invocation from any stage, method and resource path
-  # within API Gateway.
   source_arn = "${aws_apigatewayv2_api.http_api.execution_arn}/*/*/likes/*"
 }

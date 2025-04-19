@@ -24,6 +24,7 @@ def lambda_handler(event, context):
                 == "true",
                 "enablePhotoUpload": os.getenv("ENABLE_PHOTO_UPLOAD", "true").lower()
                 == "true",
+                "enableLikes": os.getenv("ENABLE_LIKES", "true").lower() == "true",
             },
             indent=2,
         ),

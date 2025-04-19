@@ -27,6 +27,7 @@ module "lambda_bootstrap" {
     CHALLENGEURL           = module.lambda_random_challenge.function_url,
     ENABLE_PHOTO_CHALLENGE = var.enable_photochallenge,
     ENABLE_PHOTO_UPLOAD    = var.enable_photoupload
+    ENABLE_LIKES           = var.enable_likes
   }
 
   create_function_url = true
