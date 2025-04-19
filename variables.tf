@@ -72,3 +72,17 @@ variable "enable_likes" {
   type        = bool
   default     = true
 }
+
+variable "theme_config" {
+  description = "Theming configuration like header, logo etc."
+  type = object({
+    header      = string
+    subHeader   = string
+    description = string
+  })
+  default = {
+    header      = "Photo App"
+    subHeader   = "Upload and share your photos"
+    description = "This is a simple photo app to upload and share photos"
+  }
+}
