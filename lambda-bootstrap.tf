@@ -28,6 +28,7 @@ module "lambda_bootstrap" {
     ENABLE_PHOTO_CHALLENGE = var.enable_photochallenge,
     ENABLE_PHOTO_UPLOAD    = var.enable_photoupload
     ENABLE_LIKES           = var.enable_likes
+    THEME_TITLE            = var.theme_config.title
     THEME_HEADER           = var.theme_config.header
     THEME_SUBHEADER        = var.theme_config.subHeader
     THEME_DESCRIPTION      = var.theme_config.description

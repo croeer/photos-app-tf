@@ -79,10 +79,12 @@ variable "theme_config" {
     header      = string
     subHeader   = string
     description = string
+    title       = string
   })
   default = {
     header      = "Photo App"
     subHeader   = "Upload and share your photos"
     description = "This is a simple photo app to upload and share photos"
+    title       = "Photo App"
   }
 }
