@@ -1,10 +1,8 @@
 locals {
   studio_issuer    = var.staff_uploads_only ? "https://${aws_cognito_user_pool.studio[0].endpoint}" : ""
-  studio_login_url = var.staff_uploads_only ? "https://${aws_cognito_user_pool_domain.studio[0].domain}.auth.${data.aws_region.studio.name}.amazoncognito.com" : ""
+  studio_login_url = var.staff_uploads_only ? "https://${aws_cognito_user_pool_domain.studio[0].domain}.auth.${data.aws_region.current.region}.amazoncognito.com" : ""
   studio_origins   = [for domain in concat([module.client_homepage_spa.cloudfront_distribution.domain_name], var.custom_domain_names) : "https://${domain}/"]
 }
-
-data "aws_region" "studio" {}
 
 resource "aws_cognito_user_pool" "studio" {
   count                    = var.staff_uploads_only ? 1 : 0
