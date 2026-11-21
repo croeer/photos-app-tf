@@ -143,7 +143,7 @@ resource "aws_iam_role_policy" "lambda_process_photos_dynamodb_policy" {
           "dynamodb:Scan",
           "dynamodb:Query",
           "dynamodb:GetItem",
-          "dynamodb:PutItem"
+          "dynamodb:UpdateItem"
         ]
         Effect   = "Allow"
         Resource = "arn:aws:dynamodb:${var.aws_region}:${var.aws_account_id}:table/${module.dynamodb_photos_label.id}"

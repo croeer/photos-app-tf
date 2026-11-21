@@ -84,23 +84,22 @@ def save_metadata_to_dynamodb(name, keys):
     processed_at = str(int(datetime.now().timestamp() * 1000))
 
     try:
-        dynamodb.put_item(
-            TableName=os.getenv("PHOTO_TABLE_NAME"),
-            Item={
-                "PK": {"S": f"image#{name}"},
-                "SK": {"S": "METADATA"},
-                "GSI1PK": {"S": "list"},
-                "GSI1SK": {"S": processed_at},
-                "thumbnail": {
-                    "S": f"s3://{os.getenv('PHOTO_BUCKET_NAME')}/{keys['thumbnail_key']}"
-                },
-                "web": {
-                    "S": f"s3://{os.getenv('PHOTO_BUCKET_NAME')}/{keys['web_key']}"
-                },
-                "original": {
-                    "S": f"s3://{os.getenv('PHOTO_BUCKET_NAME')}/{keys['original_key']}"
-                },
-                "likes": {"N": "0"},
+        # A repeated processing event must preserve metadata edited by staff.
+        bucket = os.environ["PHOTO_BUCKET_NAME"]
+        dynamodb.update_item(
+            TableName=os.environ["PHOTO_TABLE_NAME"],
+            Key={"PK": {"S": f"image#{name}"}, "SK": {"S": "METADATA"}},
+            UpdateExpression=(
+                "SET GSI1PK = :list, GSI1SK = if_not_exists(GSI1SK, :time), "
+                "thumbnail = :thumb, web = :web, original = :original, "
+                "likes = if_not_exists(likes, :zero)"
+            ),
+            ExpressionAttributeValues={
+                ":list": {"S": "list"}, ":time": {"S": processed_at},
+                ":thumb": {"S": f"s3://{bucket}/{keys['thumbnail_key']}"},
+                ":web": {"S": f"s3://{bucket}/{keys['web_key']}"},
+                ":original": {"S": f"s3://{bucket}/{keys['original_key']}"},
+                ":zero": {"N": "0"},
             },
         )
     except ClientError as e:
