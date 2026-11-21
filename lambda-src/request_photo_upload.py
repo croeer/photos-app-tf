@@ -3,9 +3,17 @@ import json
 import boto3
 import random
 import string
+from botocore.config import Config
 from botocore.exceptions import ClientError
 
-s3_client = boto3.client("s3")
+# The upload bucket and Lambda share a region. Send browser POSTs there directly.
+s3_client = boto3.client(
+    "s3",
+    config=Config(
+        signature_version="s3v4",
+        s3={"addressing_style": "virtual", "us_east_1_regional_endpoint": "regional"},
+    ),
+)
 
 
 def create_presigned_post(bucket_name, object_name, expiration):

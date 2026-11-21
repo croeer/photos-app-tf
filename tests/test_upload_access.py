@@ -6,8 +6,20 @@ from pathlib import Path
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "lambda-src"))
-with patch.dict(os.environ, {"AWS_EC2_METADATA_DISABLED": "true", "AWS_DEFAULT_REGION": "eu-central-1"}):
+with patch.dict(os.environ, {
+    "AWS_DEFAULT_REGION": "eu-central-1",
+    "AWS_ACCESS_KEY_ID": "test",
+    "AWS_SECRET_ACCESS_KEY": "test",
+}):
     import request_photo_upload
+
+
+class UploadEndpointTests(unittest.TestCase):
+    def test_signed_form_posts_directly_to_bucket_region(self):
+        form = request_photo_upload.create_presigned_post("studio-test", "bowl.jpg", 300)
+        self.assertEqual(form["url"], "https://studio-test.s3.eu-central-1.amazonaws.com/")
+        self.assertEqual(form["fields"]["x-amz-algorithm"], "AWS4-HMAC-SHA256")
+        self.assertIn("/eu-central-1/s3/aws4_request", form["fields"]["x-amz-credential"])
 
 
 class UploadAccessTests(unittest.TestCase):
