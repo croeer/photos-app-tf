@@ -57,6 +57,12 @@ variable "enable_photoupload" {
   default     = true
 }
 
+variable "staff_uploads_only" {
+  description = "Restrict photo uploads to invited staff in a dedicated Cognito user pool."
+  type        = bool
+  default     = false
+}
+
 variable "idp_config" {
   description = "The configuration for the identity provider."
   type = object({

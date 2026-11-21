@@ -8,7 +8,7 @@ module "lambda_list_label" {
   source     = "cloudposse/label/null"
   version    = "0.25"
   context    = module.this.context
-  name       = "${var.app_name}-list"
+  name       = "list"
   attributes = ["lambda"]
 }
 
