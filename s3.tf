@@ -24,6 +24,18 @@ resource "aws_s3_bucket" "photos_store_bucket" {
   force_destroy = true
 }
 
+# The browser needs CORS to read public thumbnail pixels for local CLIP inference.
+resource "aws_s3_bucket_cors_configuration" "studio_photo_reads" {
+  count  = var.staff_uploads_only ? 1 : 0
+  bucket = aws_s3_bucket.photos_store_bucket.id
+
+  cors_rule {
+    allowed_methods = ["GET", "HEAD"]
+    allowed_origins = ["*"]
+    allowed_headers = ["*"]
+  }
+}
+
 data "aws_iam_policy_document" "queue" {
   statement {
     effect = "Allow"

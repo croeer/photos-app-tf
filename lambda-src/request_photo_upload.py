@@ -3,9 +3,17 @@ import json
 import boto3
 import random
 import string
+from botocore.config import Config
 from botocore.exceptions import ClientError
 
-s3_client = boto3.client("s3")
+# The upload bucket and Lambda share a region. Send browser POSTs there directly.
+s3_client = boto3.client(
+    "s3",
+    config=Config(
+        signature_version="s3v4",
+        s3={"addressing_style": "virtual", "us_east_1_regional_endpoint": "regional"},
+    ),
+)
 
 
 def create_presigned_post(bucket_name, object_name, expiration):
@@ -20,6 +28,14 @@ def create_presigned_post(bucket_name, object_name, expiration):
 
 
 def lambda_handler(event, context):
+    if os.getenv("ENABLE_PHOTO_UPLOAD", "false").lower() != "true":
+        return {"statusCode": 403, "body": json.dumps({"error": "Uploads disabled"})}
+
+    if os.getenv("STAFF_UPLOADS_ONLY", "false").lower() == "true":
+        claims = event.get("requestContext", {}).get("authorizer", {}).get("jwt", {}).get("claims", {})
+        if event.get("routeKey") != "POST /api/studio/upload" or claims.get("token_use") != "access":
+            return {"statusCode": 403, "body": json.dumps({"error": "Staff sign-in required"})}
+
     body = json.loads(event.get("body", "{}"))
     photos = json.loads(body.get("photos", "[]"))
 
@@ -47,9 +63,9 @@ def lambda_handler(event, context):
         presigned_post = create_presigned_post(
             os.environ["UPLOAD_BUCKET_NAME"], key, len(photos) * 300
         )
-        print(presigned_post)
-        if presigned_post:
-            urls.append(presigned_post)
+        if not presigned_post:
+            return {"statusCode": 503, "body": json.dumps({"error": "Upload unavailable"})}
+        urls.append(presigned_post)
     print("Done")
     # print(urls)
     return {

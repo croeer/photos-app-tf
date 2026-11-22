@@ -73,7 +73,7 @@ resource "aws_apigatewayv2_route" "like_post_route" {
 }
 
 resource "aws_apigatewayv2_route" "default_post_route" {
-  count     = var.idp_config != null ? 0 : 1
+  count     = var.enable_photoupload && !var.staff_uploads_only && var.idp_config == null ? 1 : 0
   api_id    = aws_apigatewayv2_api.http_api.id
   route_key = "POST /{proxy+}"
   target    = "integrations/${aws_apigatewayv2_integration.post_lambda_integration.id}"
@@ -108,7 +108,7 @@ resource "aws_apigatewayv2_route" "like_post_route_auth" {
 }
 
 resource "aws_apigatewayv2_route" "default_post_route_auth" {
-  count              = var.idp_config != null ? 1 : 0
+  count              = var.enable_photoupload && !var.staff_uploads_only && var.idp_config != null ? 1 : 0
   api_id             = aws_apigatewayv2_api.http_api.id
   route_key          = "POST /{proxy+}"
   target             = "integrations/${aws_apigatewayv2_integration.post_lambda_integration.id}"
@@ -143,9 +143,7 @@ resource "aws_lambda_permission" "post_lambda_permission" {
   function_name = module.lambda_upload.lambda_function_name
   principal     = "apigateway.amazonaws.com"
 
-  # The /* part allows invocation from any stage, method and resource path
-  # within API Gateway.
-  source_arn = "${aws_apigatewayv2_api.http_api.execution_arn}/*/*/{proxy+}"
+  source_arn = var.staff_uploads_only ? "${aws_apigatewayv2_api.http_api.execution_arn}/*/POST/api/studio/upload" : "${aws_apigatewayv2_api.http_api.execution_arn}/*/*/{proxy+}"
 }
 
 resource "aws_lambda_permission" "like_lambda_permission" {

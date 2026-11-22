@@ -1,6 +1,28 @@
+data "aws_region" "current" {}
+
+data "http" "python312_layers" {
+  url = "https://api.klayers.cloud/api/v2/p3.12/layers/latest/${data.aws_region.current.region}/"
+
+  retry {
+    attempts = 2
+  }
+}
+
 locals {
+  # The catalog also contains an older, lowercase "pillow" package.
+  pillow_layer_name = "arn:aws:lambda:${data.aws_region.current.region}:770693421928:layer:Klayers-p312-Pillow"
+  pillow_layer_arn = one([
+    for layer in jsondecode(data.http.python312_layers.response_body) : layer.arn
+    if layer.package == "Pillow"
+  ])
   photos_table_name = aws_dynamodb_table.photo_table.name
   sqs_queue_url     = aws_sqs_queue.queue.id
+}
+
+# Verify the exact published version is available to this account before apply.
+data "aws_lambda_layer_version" "pillow" {
+  layer_name = local.pillow_layer_name
+  version    = tonumber(trimprefix(local.pillow_layer_arn, "${local.pillow_layer_name}:"))
 }
 
 data "archive_file" "lambda_process_photos_zip" {
@@ -27,7 +49,7 @@ module "lambda_process" {
   runtime       = "python3.12"
   memory_size   = 1024
   timeout       = 10
-  layers        = ["arn:aws:lambda:eu-central-1:770693421928:layer:Klayers-p312-Pillow:4"]
+  layers        = [data.aws_lambda_layer_version.pillow.arn]
   environment_variables = {
     TZ                = "Europe/Berlin",
     PHOTO_BUCKET_NAME = aws_s3_bucket.photos_store_bucket.bucket,
@@ -121,7 +143,7 @@ resource "aws_iam_role_policy" "lambda_process_photos_dynamodb_policy" {
           "dynamodb:Scan",
           "dynamodb:Query",
           "dynamodb:GetItem",
-          "dynamodb:PutItem"
+          "dynamodb:UpdateItem"
         ]
         Effect   = "Allow"
         Resource = "arn:aws:dynamodb:${var.aws_region}:${var.aws_account_id}:table/${module.dynamodb_photos_label.id}"

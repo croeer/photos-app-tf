@@ -38,6 +38,7 @@ resource "aws_cloudfront_distribution" "cf_photos_store" {
 
     forwarded_values {
       query_string = true
+      headers      = var.staff_uploads_only ? ["Origin"] : []
 
       cookies {
         forward = "all"

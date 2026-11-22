@@ -28,6 +28,18 @@ def lambda_handler(event, context):
         },
     }
 
+    if os.getenv("STUDIO_CLIENT_ID"):
+        response_body["_links"]["tags"] = {"href": f"{os.environ['HOST']}api/list?view=tags"}
+        response_body["studio"] = {
+            "clientId": os.environ["STUDIO_CLIENT_ID"],
+            "issuer": os.environ["STUDIO_ISSUER"],
+            "loginUrl": os.environ["STUDIO_LOGIN_URL"],
+            "editTagsUrl": f"{os.environ['HOST']}api/studio/tags",
+        }
+
+        if os.getenv("STUDIO_UPLOAD_ENABLED", "true").lower() == "true":
+            response_body["studio"]["uploadUrl"] = f"{os.environ['HOST']}api/studio/upload"
+
     if enable_photo_challenge:
         response_body["_links"]["challenge"] = {"href": f"{os.getenv('CHALLENGEURL')}"}
 

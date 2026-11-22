@@ -23,6 +23,8 @@ module "lambda_upload" {
   environment_variables = {
     TZ                     = "Europe/Berlin",
     MAX_PHOTOS_PER_REQUEST = var.max_photos_per_request,
+    ENABLE_PHOTO_UPLOAD    = var.enable_photoupload
+    STAFF_UPLOADS_ONLY     = var.staff_uploads_only
     UPLOAD_BUCKET_NAME     = aws_s3_bucket.photos_upload_bucket.bucket
   }
 }
